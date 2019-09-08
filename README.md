@@ -2,21 +2,28 @@
 
 # 목차
 
-## 1. sequelize란
+## 1. [sequelize란](#1.-sequelize란)
 
-## 2. sequelize 세팅
-    [1. 설치](#1.-설치) 
-    2. sequelize를 mysql에 적용해보기
-    3. (추가)connection pool
+## 2. [sequelize 세팅](#2.-sequelize-세팅)
 
-## 3. 테이블 모델링
-    1. 모델링 옵션 넣기
-## 4. db와 생성한 모델 동기화 하기
-    1. 한번에 모든 모델들을 동기화 하기
-    2. (추가) 배포할 때
-## 5. sql 쿼리
-## 6. promise와 async/await
---- 
+1. [설치](#1.-설치)
+2. [sequelize를 mysql에 적용해보기](#2.-sequelize를-mysql에-적용해-보기)
+3. [(추가)connection pool](#3.-connection-pool)
+
+## 3. [테이블 모델링](#3.-테이블-모델링)
+
+1. [모델링 옵션 넣기](#1.-모델링-옵션-넣기)
+
+## 4. [db와 생성한 모델 동기화 하기](#4.-db와-생성한-모델-동기화-하기)
+
+1. [한번에 모든 모델들을 동기화 하기](#1.-한번에-모든-모델들을-동기화-하기)
+2. [(추가) 배포할 때](<#2.-(추가)-배포할-때>)
+
+## 5. [sql 쿼리](#5.-sql-쿼리)
+
+## 6. [promise와 async/await](#6.-promise와-async/await)
+
+---
 
 ### 1. Sequelize란
 
@@ -29,7 +36,9 @@ PostgreSQL, MySQL, SQLite and MSSQL를 지원합니다.
 ---
 
 ### 2. Sequelize 세팅
-#### 1. 설치 
+
+#### 1. 설치
+
 `npm init`
 
 `npm i sequelize`
@@ -65,11 +74,13 @@ const sequelize = new Sequelize('postgres://user:pass@example.com:5432/dbname');
 ```
 
 #### 3. connection pool
+
 만약에 우리가 하나의 프로세스로 데이터베이스와 연결하려고 한다면, sequelize 객체를 하나만 생성해도 좋아요.  
 sequelize객체를 생성할 때 connection pool 또한 이니셜라이즈 됩니다.  
-connection pool은 constructor의 옵션에서 설정할 수 도 있습니다. 
+connection pool은 constructor의 옵션에서 설정할 수 도 있습니다.
 
-예) 
+예)
+
 ```
 const sequelize = new Sequelize(/* ... */, {
   // ...
@@ -80,10 +91,12 @@ const sequelize = new Sequelize(/* ... */, {
     idle: 10000
   }
 });
-```  
+```
 
-#### 4. connection 테스트 해보기  
-```.authenticate()``` 함수를 이용해서 커넥션을 테스트 할 수 있습니다.  
+#### 4. connection 테스트 해보기
+
+`.authenticate()` 함수를 이용해서 커넥션을 테스트 할 수 있습니다.
+
 ```
 sequelize
   .authenticate()
@@ -96,15 +109,19 @@ sequelize
 ```
 
 #### 5. connection 종료
+
 기본값으로 sequelize는 하루 죙~일 열려있습니다.  
-```sequelize.close()```를 사용해 종료할 수 있습니다.
+`sequelize.close()`를 사용해 종료할 수 있습니다.
 
 ---
+
 ### 3. 테이블 모델링
 
-모델은 ```sequelize.Model```을 extends 한 클래스입니다.  
-두가지 동일한 방법으로 모델들을 정의할 수 있는데요,  
-1. ```Sequelize.Model.init(attributes, options)```로 정의하기.
+모델은 `sequelize.Model`을 extends 한 클래스입니다.  
+두가지 동일한 방법으로 모델들을 정의할 수 있는데요,
+
+1. `Sequelize.Model.init(attributes, options)`로 정의하기.
+
 ```
 const Model = Sequelize.Model;
 class User extends Model {}
@@ -125,7 +142,8 @@ User.init({
 });
 ```
 
-2. ```sequelize.define```로 정의하기  
+2. `sequelize.define`로 정의하기
+
 ```
 const User = sequelize.define('user', {
   // attributes
@@ -140,18 +158,21 @@ const User = sequelize.define('user', {
 }, {
   // opt
 ```
-내부적으로 ```sequelize.define```은 ```Model.init```을 호출합니다.  
 
-위에있는 코드들은 table 이름을 자동적으로 **users**로 바꿔줍니다.   
+내부적으로 `sequelize.define`은 `Model.init`을 호출합니다.
+
+위에있는 코드들은 table 이름을 자동적으로 **users**로 바꿔줍니다.  
 자동으로 복수형으로 바꾸는데, 이게 싫으면 옵션을 추가해주면 돼요
-```freezeTableName: true```  
+`freezeTableName: true`  
 자동으로 sequelize는
-```id```(primary key),
-```createdAt```,
-```updatedAt```을 모든 모델에 생성해줍니다.
+`id`(primary key),
+`createdAt`,
+`updatedAt`을 모든 모델에 생성해줍니다.
 
 #### 1. 모델링 옵션 넣기
+
 sequelize 생성자는 define 옵션을 갖고있어서 모든 모델에 옵션을 적용할 수 있습니다.
+
 ```
 const sequelize = new Sequelize(connectionURI, {
   define: {
@@ -169,12 +190,15 @@ Foo.init({ /* ... */ }, { sequelize });
 class Bar extends Model {}
 Bar.init({ /* ... */ }, { sequelize, timestamps: true });
 ```
+
 자세한 옵션들은 [이곳](https://sequelize.org/master/class/lib/sequelize.js~Sequelize.html#instance-method-define)에서 확인해주세요.
 
 ---
 
 ### 4. db와 생성한 모델 동기화 하기
-sequelize가 우리가 정의한 모델들을 바로 db와 동기화 시키고 싶으면, ```then()```메소드를 사용합시다!
+
+sequelize가 우리가 정의한 모델들을 바로 db와 동기화 시키고 싶으면, `then()`메소드를 사용합시다!
+
 ```
 // Note: using `force: true` will drop the table if it already exists
 User.sync({ force: true }).then(() => {
@@ -185,108 +209,126 @@ User.sync({ force: true }).then(() => {
   });
 });
 ```
-#### 1. 한번에 모든 모델들을 동기화 하기
-각 모델마다 ```then()```을 통해 동기화 하지말고, sequelize 객체에 ```sync()```메소드를 사용해 한꺼번에 동기화 시킵시다!
-```sequelize.sync()```
-#### 2. (추가) 배포할 때 
-배포환경에서는 ```sync()```대신에 Migrations를 고려해봄직 합니다.  [이곳](https://sequelize.org/master/manual/migrations.html)에서 확인해보세요.
 
+#### 1. 한번에 모든 모델들을 동기화 하기
+
+각 모델마다 `then()`을 통해 동기화 하지말고, sequelize 객체에 `sync()`메소드를 사용해 한꺼번에 동기화 시킵시다!
+`sequelize.sync()`
+
+#### 2. (추가) 배포할 때
+
+배포환경에서는 `sync()`대신에 Migrations를 고려해봄직 합니다. [이곳](https://sequelize.org/master/manual/migrations.html)에서 확인해보세요.
 
 ---
 
-### 5. sql 쿼리 
-#### 1. attributes 
+### 5. sql 쿼리
+
+#### 1. attributes
+
 attributes 옵션을 통해 원하는 column 값만 가져올 수 있습니다.
+
 ```
 Model.findAll({
   attributes: ['foo', 'bar']
 });
 ```
+
 ```
 SELECT foo, bar ...
 ```
-aggregation또한 ```sequelize.fn```을 통해 사용가능합니다.
+
+aggregation또한 `sequelize.fn`을 통해 사용가능합니다.
+
 ```
 Model.findAll({
   attributes: [[sequelize.fn('COUNT', sequelize.col('hats')), 'no_hats']]
 });
 ```
+
 ```
 SELECT COUNT(hats) AS no_hats ...
 ```
+
 aggregation을 사용하려면 별명을 부여해야 합니다.
 위의 코드에서는 ```instance.get('no_hats')를 통해 모자의 개수를 얻을 수 있습니다.  
 <br>
 <br>
 물론 exclude를 통해 제외 시켜버릴 수도 있습니다.
+
 ```
 Model.findAll({
   attributes: { exclude: ['someColumn'] }
 });
 ```
+
 ---
 
-#### 2.Where  
- find/findAll 이나 updates/destroy등의 질의를 할때 ```where```객체를 넣어서 필터링을 할 수 있습니다.
- ```
- const Op = Sequelize.Op;
+#### 2.Where
+
+find/findAll 이나 updates/destroy등의 질의를 할때 `where`객체를 넣어서 필터링을 할 수 있습니다.
+
+```
+const Op = Sequelize.Op;
 
 Post.findAll({
-  where: {
-    authorId: 2
-  }
+ where: {
+   authorId: 2
+ }
 });
 // SELECT * FROM post WHERE authorId = 2
 
 Post.findAll({
-  where: {
-    authorId: 12,
-    status: 'active'
-  }
+ where: {
+   authorId: 12,
+   status: 'active'
+ }
 });
 // SELECT * FROM post WHERE authorId = 12 AND status = 'active';
 
 Post.findAll({
-  where: {
-    [Op.or]: [{authorId: 12}, {authorId: 13}]
-  }
+ where: {
+   [Op.or]: [{authorId: 12}, {authorId: 13}]
+ }
 });
 // SELECT * FROM post WHERE authorId = 12 OR authorId = 13;
 
 Post.findAll({
-  where: {
-    authorId: {
-      [Op.or]: [12, 13]
-    }
-  }
+ where: {
+   authorId: {
+     [Op.or]: [12, 13]
+   }
+ }
 });
 // SELECT * FROM post WHERE authorId = 12 OR authorId = 13;
 
 Post.destroy({
-  where: {
-    status: 'inactive'
-  }
+ where: {
+   status: 'inactive'
+ }
 });
 // DELETE FROM post WHERE status = 'inactive';
 
 Post.update({
-  updatedAt: null,
+ updatedAt: null,
 }, {
-  where: {
-    deletedAt: {
-      [Op.ne]: null
-    }
-  }
+ where: {
+   deletedAt: {
+     [Op.ne]: null
+   }
+ }
 });
 // UPDATE post SET updatedAt = null WHERE deletedAt NOT NULL;
 
 Post.findAll({
-  where: sequelize.where(sequelize.fn('char_length', sequelize.col('status')), 6)
+ where: sequelize.where(sequelize.fn('char_length', sequelize.col('status')), 6)
 });
 // SELECT * FROM post WHERE char_length(status) = 6;
- ```
+```
+
 #### operator
-```Sequelize.Op```를 통해 더욱 정교한 비교가 가능해집니다.
+
+`Sequelize.Op`를 통해 더욱 정교한 비교가 가능해집니다.
+
 ```
 const Op = Sequelize.Op
 
@@ -326,7 +368,9 @@ const Op = Sequelize.Op
 [Op.gt]: { [Op.all]: literal('SELECT 1') }
                           // > ALL (SELECT 1)
 ```
-#### 범위 형식의 operator 
+
+#### 범위 형식의 operator
+
 ```
 // All the above equality and inequality operators plus the following:
 
@@ -340,7 +384,9 @@ const Op = Sequelize.Op
 [Op.noExtendRight]: [1, 2] // &< [1, 2) (PG range does not extend to the right of operator)
 [Op.noExtendLeft]: [1, 2]  // &> [1, 2) (PG range does not extend to the left of operator)
 ```
+
 #### 조합을 통해 복잡한 비교문 간단히 생성!
+
 ```
 const Op = Sequelize.Op;
 
@@ -378,7 +424,9 @@ const Op = Sequelize.Op;
 }
 // title LIKE 'Boat%' OR description LIKE '%boat%'
 ```
+
 #### relation 쿼리
+
 ```
 // Find all projects with a least one task where task.state === project.state
 Project.findAll({
@@ -390,6 +438,7 @@ Project.findAll({
 ```
 
 #### Pagination / Limiting
+
 ```
 // Fetch 10 instances/rows
 Project.findAll({ limit: 10 })
@@ -458,8 +507,10 @@ Subtask.findAll({
 ```
 
 #### Index Hints
-```indexHints```는 부가적으로 query에 index hints를 부여할 수 있습니다.  
-hint의 타입은 ```Sequelize.IndexHints```여야 하며, 현재 존재하고 있는 index여야 합니다.
+
+`indexHints`는 부가적으로 query에 index hints를 부여할 수 있습니다.  
+hint의 타입은 `Sequelize.IndexHints`여야 하며, 현재 존재하고 있는 index여야 합니다.
+
 ```
 Project.findAll({
   indexHints: [
@@ -474,13 +525,18 @@ Project.findAll({
     }
   }
 ```
+
 이는 아래와 같은 mysql query와 같습니다.
+
 ```
 SELECT * FROM Project USE INDEX (index_project_on_name) WHERE name LIKE 'FOO %' AND id > 623;
 ```
-```Sequelize.IndexHints```는 ```USE```, ```FORCE```,```IGNORE```를 가지고 있습니다.
 
-###  6. promise와 async/await
-sequelize는 promise들을 광범위하게 사용합니다.   
-async await도 사용 가능합니다.   
-또한 모든 sequelize의 promise들은 ```bluebird``` 프로미스여서, bluebird API를 적용할 수 있습니다. 
+`Sequelize.IndexHints`는 `USE`, `FORCE`,`IGNORE`를 가지고 있습니다.
+
+### 6. promise와 async/await
+
+sequelize는 promise들을 광범위하게 사용합니다.  
+async await도 사용 가능합니다.  
+또한 모든 sequelize의 promise들은 `bluebird` 프로미스여서, bluebird API를 적용할 수 있습니다.
+
