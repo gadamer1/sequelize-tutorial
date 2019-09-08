@@ -5,7 +5,7 @@
 ## 1. sequelize란
 
 ## 2. sequelize 세팅
-    1. 설치](#1.-설치) 
+    [1. 설치](#1.-설치) 
     2. sequelize를 mysql에 적용해보기
     3. (추가)connection pool
 
